@@ -1,3 +1,7 @@
+import pandas as pd
+import numpy as np
+
+
 # (1) Today Trend
 def today_trend(df):
     # Get numerical
@@ -22,10 +26,11 @@ def today_trend(df):
     # Append to df
     df['Today_trend_cate'] = temp_list
 
-    # Change datatype to 'catagory'
+    # Change datatype to 'category'
     df['Today_trend_cate'] = df['Today_trend_cate'].astype('category')
 
     return df
+
 
 # (2) Next Day Trend
 def next_day_trend(df):
@@ -42,7 +47,7 @@ def next_day_trend(df):
         temp_value = temp_close[y] - temp_close[x]
         temp_list.append(temp_value)
 
-        # Tranform index, should be subtacted by 1
+        # Transform index, should be subtracted by 1
         if y == (df.shape[0] - 1):
             break
 
@@ -68,10 +73,11 @@ def next_day_trend(df):
     # Append to df
     df['Tomorrow_trend_cate'] = temp_list
 
-    # Change datatype to 'catagory'
+    # Change datatype to 'category'
     df['Tomorrow_trend_cate'] = df['Tomorrow_trend_cate'].astype('category')
 
     return df
+
 
 # (3) SMA (Simple Moving Average)
 def sma(df):
@@ -81,10 +87,10 @@ def sma(df):
     x = -1
     while True:
         x += 1
-        sma = temp_close[x:x + 14].mean()
-        temp_list.append(sma)
+        first_few_sma = temp_close[x:x + 14].mean()
+        temp_list.append(first_few_sma)
 
-        # Tranform to index, should be subtacted by 1
+        # Transform to index, should be subtracted by 1
         if x + 13 == (df.shape[0] - 1):
             break
 
@@ -101,6 +107,7 @@ def sma(df):
 
     return df
 
+
 # (4) RSI (Relative Strength Indicator)
 def rsi(df):
     # 1.
@@ -116,10 +123,10 @@ def rsi(df):
         low = temp_low[x:x + n].min()
 
         # formula
-        rsi = 100 - (100 / (1 + (high / low)))
-        temp_list.append(rsi)
+        one_rsi = 100 - (100 / (1 + (high / low)))
+        temp_list.append(one_rsi)
 
-        # Tranform to index, should be subtacted by 1
+        # Transform to index, should be subtracted by 1
         if x + (n - 1) == (df.shape[0] - 1):
             break
 
@@ -135,6 +142,7 @@ def rsi(df):
     df['Rsi'] = temp_rsi
 
     return df
+
 
 # (5) KD (Stochastic Oscillator)
 def kd(df):
@@ -154,10 +162,10 @@ def kd(df):
         close = temp_close[x + n - 1]
 
         # formula
-        kd = (close - low) / (high - low) * 100
-        temp_list.append(kd)
+        one_kd = (close - low) / (high - low) * 100
+        temp_list.append(one_kd)
 
-        # Tranform to index, should be subtacted by 1
+        # Transform to index, should be subtracted by 1
         if x + (n - 1) == (df.shape[0] - 1):
             break
 
@@ -173,6 +181,7 @@ def kd(df):
     # 4. Combine into one df
     df['Kd'] = temp_kd
 
+
 # (6) MACD (Moving Average Convergence/ Divergence)
 def macd(df):
     # EMA 12 Days
@@ -180,10 +189,12 @@ def macd(df):
     temp_close = df['Close']
 
     # Calculate the first EMA
+    x = -1
+    n = 12
     ema_second_day = temp_close[x:x + n].mean()
     temp_list = [ema_second_day]
 
-    # Here we calculate the first one by oursleves, so we should add x by 1
+    # Here we calculate the first one by ourselves, so we should add x by 1
     x = 0
     n = 12
     smoothing = 2 / (1 + n)
@@ -199,7 +210,7 @@ def macd(df):
         ema_yesterday = ema
         temp_list.append(ema)
 
-        # Tranform to index, should be subtacted by 1
+        # Transform to index, should be subtracted by 1
         # Final_index = df.shape[0]-1
         if x + (n - 1) == (df.shape[0] - 1):
             break
@@ -220,10 +231,12 @@ def macd(df):
     temp_close = df['Close']
 
     # Calculate the first EMA
+    x = -1
+    n = 26
     ema_second_day = temp_close[x:x + n].mean()
     temp_list = [ema_second_day]
 
-    # Here we calculate the first one by oursleves, so we should add x by 1
+    # Here we calculate the first one by ourselves, so we should add x by 1
     x = 0
     n = 26
     smoothing = 2 / (1 + n)
@@ -239,7 +252,7 @@ def macd(df):
         ema_yesterday = ema
         temp_list.append(ema)
 
-        # Tranform to index, should be subtacted by 1
+        # Transform to index, should be subtracted by 1
         # Final_index = df.shape[0]-1
         if x + (n - 1) == (df.shape[0] - 1):
             break
@@ -260,6 +273,7 @@ def macd(df):
     df['Macd'] = df['Ema_12'] - df['Ema_26']
     return df
 
+
 # 3. Final adjustment
 def tech_final_adjustment(df):
     # (1) Drop useless columns
@@ -271,7 +285,7 @@ def tech_final_adjustment(df):
     x = pd.to_datetime(x)
     df['datetime'] = x
 
-    # Remvoe time information, only contains date
+    # Remove time information, only contains date
     temp_list = []
     for i in df['datetime']:
         i = i.date()

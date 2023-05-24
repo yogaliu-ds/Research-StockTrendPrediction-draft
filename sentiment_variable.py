@@ -1,8 +1,16 @@
 #
 
+
+# Basic
+import pandas as pd
+
+# Others
+from datetime import datetime, timedelta
+import statistics
 from transformers import pipeline
 
-def datatype_process(df):
+
+def datatype_process(news_data):
     temp_datetime_string = news_data['datetime']
 
     # iterate the datetime string to datetime
@@ -13,9 +21,17 @@ def datatype_process(df):
 
     news_data['datetime'] = temp_datetime_list
 
+    return news_data
+
+# Let's use the original FinBERT first
 # Title classifier
+
+
+# I don't know if I can put it outside the function
+classifier = pipeline("sentiment-analysis", model='ProsusAI/finbert')
+
+
 def title_classifier(news_data):
-    classifier = pipeline("sentiment-analysis", model='ProsusAI/finbert')
 
     # 2. Transform the 'title' to sentiment score
     title_list = news_data['title']
@@ -25,7 +41,7 @@ def title_classifier(news_data):
         result_list = classifier(i)
         result = result_list[0]
         # I don't know if I can do it this way, but...
-        # posive: get positive score
+        # positive: get positive score
         # negative: get negative score
         # neutralL get 0
         if result['label'] == 'positive':
@@ -46,7 +62,7 @@ def title_classifier(news_data):
 # You need to decide which part you want.
 
 
-# Function of spliting the content
+# Function of splitting the content
 def split_article(article, max_length):
     """
     Splits a long article into smaller chunks with a maximum length of `max_length`.
@@ -63,6 +79,7 @@ def split_article(article, max_length):
     if current_chunk:
         chunks.append(current_chunk.strip())
     return chunks
+
 
 # Content classifier
 def content_classifier(news_data):
@@ -84,7 +101,7 @@ def content_classifier(news_data):
             result_list = classifier(truncated_content)
             result = result_list[0]
             # I don't know if I can do it this way, but...
-            # posive: get positive score
+            # positive: get positive score
             # negative: get negative score
             # neutralL get 0
             if result['label'] == 'positive':
@@ -158,14 +175,13 @@ def summation_short_term(news_data):
         if x == news_data_temp.shape[0] - 1:
             break
 
-    # 3. Concat the temp_friday_df to news_data_temp
-    print('news_data_temp', news_data_temp.shape)
-    print('temp_friday_df', temp_friday_df.shape)
-
     news_data_concat = pd.concat([news_data_temp, temp_friday_df], axis=0, ignore_index=True)
 
+    return news_data_concat
+
+
 # (3) Mid-term and Long-term sentiment score
-def summation_mid_term(news_data):
+def summation_mid_term(news_data_concat):
     n = 7
 
     # 1. The average of past 14 days
@@ -177,7 +193,7 @@ def summation_mid_term(news_data):
         midterm_score = temp_score[x:x + n].sum()
         temp_list.append(midterm_score)
 
-        # Tranform to index, should be subtacted by 1
+        # Transform to index, should be subtracted by 1
         if x + (n - 1) == (news_data_concat.shape[0] - 1):
             break
 
@@ -192,7 +208,8 @@ def summation_mid_term(news_data):
     # 4. Combine into one df
     news_data_concat['title_midterm_sentiment'] = temp_midterm_score
 
-def summation_long_term(news_data):
+
+def summation_long_term(news_data_concat):
     n = 14
 
     # 1. The average of past 14 days
@@ -204,7 +221,7 @@ def summation_long_term(news_data):
         longterm_score = temp_score[x:x + n].sum()
         temp_list.append(longterm_score)
 
-        # Tranform to index, should be subtacted by 1
+        # Transform to index, should be subtracted by 1
         if x + (n - 1) == (news_data_concat.shape[0] - 1):
             break
 
@@ -219,8 +236,9 @@ def summation_long_term(news_data):
     # 4. Combine into one df
     news_data_concat['title_longterm_sentiment'] = temp_longterm_score
 
+
 # Final adjustment
-def final_adjustment(news_data):
+def final_adjustment(news_data_concat):
     # 1. Delete Saturday and Sunday
     weekend_num = 0
 
@@ -244,6 +262,3 @@ def final_adjustment(news_data):
 
     # move the index to column 'datetime'
     news_data_final['datetime'] = news_data_final.index
-
-
-
