@@ -181,6 +181,8 @@ def kd(df):
     # 4. Combine into one df
     df['Kd'] = temp_kd
 
+    return df
+
 
 # (6) MACD (Moving Average Convergence/ Divergence)
 def macd(df):

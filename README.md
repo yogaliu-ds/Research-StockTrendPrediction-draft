@@ -1,6 +1,7 @@
 Hi, I'm yoga Liu.  
 This is a draft of my research.  
-My research topic is "Stock Trend Prediction using Technical Indicator and News Sentiment Analysis with FinBERT"
+I'll upload insensitive content if I have free time.  
+My research topic is "Stock Trend Prediction using Technical Indicator and News Sentiment Analysis with FinBERT".
 
 Package:
 yfinance

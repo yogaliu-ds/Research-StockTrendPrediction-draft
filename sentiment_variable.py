@@ -56,9 +56,11 @@ def title_classifier(news_data):
         score_list.append(score)
     news_data['title_sentiment_score'] = score_list
 
+    return news_data
+
 # 3. Transform the 'content' to sentiment score
 # Need to truncate the content. You should decide how to select the content(512 words) for sentiment analysis.
-# The article contents have too much words (1000~10000), so it's impossible to just feed them into the FinBERT.
+# The article contents have too much words (1000~10000), so it's impossible to just feed them into FinBERT.
 # You need to decide which part you want.
 
 
@@ -123,6 +125,8 @@ def content_classifier(news_data):
 
     # add to the df
     news_data['content_sentiment_score'] = temp_list
+
+    return news_data
 
 
 # Short-term sentiment score (main Engineering for summation of scores)
@@ -208,6 +212,8 @@ def summation_mid_term(news_data_concat):
     # 4. Combine into one df
     news_data_concat['title_midterm_sentiment'] = temp_midterm_score
 
+    return news_data_concat
+
 
 def summation_long_term(news_data_concat):
     n = 14
@@ -236,6 +242,8 @@ def summation_long_term(news_data_concat):
     # 4. Combine into one df
     news_data_concat['title_longterm_sentiment'] = temp_longterm_score
 
+    return news_data_concat
+
 
 # Final adjustment
 def final_adjustment(news_data_concat):
@@ -262,3 +270,5 @@ def final_adjustment(news_data_concat):
 
     # move the index to column 'datetime'
     news_data_final['datetime'] = news_data_final.index
+
+    return news_data_concat
