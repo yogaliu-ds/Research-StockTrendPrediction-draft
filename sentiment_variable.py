@@ -1,6 +1,3 @@
-#
-
-
 # Basic
 import pandas as pd
 
@@ -10,6 +7,7 @@ import statistics
 from transformers import pipeline
 
 
+# process the 
 def datatype_process(news_data):
     temp_datetime_string = news_data['datetime']
 
@@ -19,28 +17,30 @@ def datatype_process(news_data):
         temp_datetime = datetime.strptime(i, '%b %d, %Y')
         temp_datetime_list.append(temp_datetime)
 
+    # Create a new column "datetime"
     news_data['datetime'] = temp_datetime_list
 
     return news_data
 
 # Let's use the original FinBERT first
 # Title classifier
-
-
-# I don't know if I can put it outside the function
+# I'm not sure if I can put it outside the function
 classifier = pipeline("sentiment-analysis", model='ProsusAI/finbert')
 
 
 def title_classifier(news_data):
 
-    # 2. Transform the 'title' to sentiment score
+    # 1. Transform the 'title' to sentiment score
     title_list = news_data['title']
 
     score_list = []
     for i in title_list:
+        # Run sentiment analysis on titles
         result_list = classifier(i)
         result = result_list[0]
-        # I don't know if I can do it this way, but...
+
+        # I'm not sure if I can do it in this way, but...
+
         # positive: get positive score
         # negative: get negative score
         # neutralL get 0
@@ -50,10 +50,10 @@ def title_classifier(news_data):
             score = - result['score']
         else:
             score = 0
-        # Check
-        # print(result['label'])
-        # print(score)
+        
         score_list.append(score)
+
+    # Insert the new column 'title_sentiment_score' to df
     news_data['title_sentiment_score'] = score_list
 
     return news_data
@@ -132,16 +132,15 @@ def content_classifier(news_data):
 # Short-term sentiment score (main Engineering for summation of scores)
 
 def summation_short_term(news_data):
-    # 1. Summation by date
+    # 1. Summation of scores by date
     news_data_temp = news_data.groupby('datetime')['title_sentiment_score'].sum()
 
     # index to column
     news_data_temp = pd.DataFrame({'datetime': news_data_temp.index, 'title_sentiment_score': news_data_temp})
 
-    # 2. Summing up sentiment score in weekends to Friday
+    # 2. Summing up sentiment scores in weekends to Friday
 
     # Add to Friday
-
     # x for index
     x = -1
     temp_dict = {}
@@ -248,27 +247,25 @@ def summation_long_term(news_data_concat):
 # Final adjustment
 def final_adjustment(news_data_concat):
     # 1. Delete Saturday and Sunday
-    weekend_num = 0
 
+    # Make a boolean list to contain Monday to Friday as True
     condition_list = []
     for i in news_data_concat['datetime']:
-        if (i.weekday() == 5) or i.weekday() == 6:
+        if (i.weekday() == 5) or (i.weekday() == 6):
             condition_list.append(False)
-
-            # Count weekend days
-            weekend_num += 1
         else:
             condition_list.append(True)
 
+    # Get only weekdays
     news_data_5days = news_data_concat[condition_list]
 
     # 2. Eliminate useless dates (those with 0 score)
     news_data_final = news_data_5days[news_data_5days['title_sentiment_score'] != 0]
 
-    # 3. Groupby date
+    # 3. Groupby date (daily basis)
     news_data_final = news_data_final.groupby('datetime').sum()
 
-    # move the index to column 'datetime'
+    # 4. Move the index to column 'datetime'
     news_data_final['datetime'] = news_data_final.index
 
-    return news_data_concat
+    return news_data_final
