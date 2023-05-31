@@ -191,7 +191,7 @@ def macd(df):
     temp_close = df['Close']
 
     # Calculate the first EMA
-    x = -1
+    x = 0
     n = 12
     ema_second_day = temp_close[x:x + n].mean()
     temp_list = [ema_second_day]
@@ -209,7 +209,9 @@ def macd(df):
 
         # formula
         ema = close * (smoothing / (1 + n)) + ema_yesterday * (1 - (smoothing / (1 + n)))
+        # Save for next loop
         ema_yesterday = ema
+        # append to the list
         temp_list.append(ema)
 
         # Transform to index, should be subtracted by 1
@@ -228,12 +230,13 @@ def macd(df):
 
     df['Ema_12'] = temp_ema_12
 
+
     # EMA 26 days
     # 1. EMA(26 days)
     temp_close = df['Close']
 
     # Calculate the first EMA
-    x = -1
+    x = 0
     n = 26
     ema_second_day = temp_close[x:x + n].mean()
     temp_list = [ema_second_day]
