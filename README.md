@@ -43,6 +43,6 @@ This repository contains a Jupyter Notebook that performs machine learning analy
         Uptrend Accuracy: 59%
         Downtrend Accuracy: 63%
 
-Usage
+# Usage
 
 To replicate the analysis, clone the repository and run the model.ipynb notebook in a Jupyter environment. Ensure all required libraries are installed.
