@@ -1,7 +1,7 @@
 Model Analysis and Evaluation
 Overview
 
-This repository contains a Jupyter Notebook that performs machine learning analysis on financial data. The notebook demonstrates data preprocessing, model training, and evaluation of several classifiers including Logistic Regression, Random Forest, and Gradient Boosting.
+This repository contains a Jupyter Notebook that performs machine learning analysis on financial data. The notebook demonstrates data preprocessing, model training, and evaluation of several classifiers including Logistic Regression, Random Forest, and Gradient Boosting.  
 Notebook Contents
 
     Data Preparation
