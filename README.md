@@ -1,8 +1,10 @@
-Model Analysis and Evaluation
-Overview
+# Stock Trend Prediction using Technical Indicator and News Sentiment Analysis with FinBERT
+
+#   Overview
 
 This repository contains a Jupyter Notebook that performs machine learning analysis on financial data. The notebook demonstrates data preprocessing, model training, and evaluation of several classifiers including Logistic Regression, Random Forest, and Gradient Boosting.  
-Notebook Contents
+
+## Notebook Contents
 
     Data Preparation
         Importing Data: The notebook starts by importing necessary libraries and the dataset.
@@ -24,7 +26,7 @@ Notebook Contents
             Testing Accuracy: 52.38%
             Notable Metrics: Better performance in training but lower testing accuracy.
 
-Model Performance
+## Model Performance
 
     Logistic Regression:
         Overall Accuracy: 61%
